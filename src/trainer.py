@@ -7,7 +7,6 @@ import datasets
 import nltk
 import numpy as np
 import torch
-import wandb
 from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -16,6 +15,7 @@ from transformers import (
     Seq2SeqTrainingArguments,
 )
 
+import wandb
 from config import DATA_DIR, PROCESSED_DATA_PATH, ROOT_DIR, SRC_DIR
 from utils import read_jsonl
 
@@ -95,23 +95,25 @@ def model_init():
 
 if __name__ == "__main__":
 
-    torch.cuda.set_device(1)
+    # torch.cuda.set_device(1)
 
     wandb.init(project="danish-t5", entity="hrmussa")
 
     data = datasets.load_dataset("json", data_files="data/danewsroom.jsonl")
+    data = data["train"].train_test_split(test_size=0.05, seed=42)
+    data["train"] = data["test"]
 
-    ds_splitter = data.train_test_split(test_size=0.2, seed=42)
+    ds_splitter = data["train"].train_test_split(test_size=0.2, seed=42)
     train = ds_splitter["train"]
     ds_splitter = ds_splitter["test"].train_test_split(test_size=0.5, seed=42)
 
-    data["train"] = train["train"]
+    data["train"] = train
     data["validation"] = ds_splitter["train"]
     data["test"] = ds_splitter["test"]
 
     tokenized_datasets = data.map(preprocess_data, batched=True)
 
-    batch_size = 64
+    batch_size = 16
     model_name = "t5-da-test"
     model_dir = SRC_DIR / model_name
 
@@ -128,7 +130,7 @@ if __name__ == "__main__":
         per_device_eval_batch_size=batch_size,
         weight_decay=0.01,
         save_total_limit=3,
-        num_train_epochs=5,
+        num_train_epochs=3,
         predict_with_generate=True,
         fp16=True,
         load_best_model_at_end=True,
