@@ -1,3 +1,5 @@
+"""Based on the following tutorial: https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887"""
+
 import os
 import string
 
@@ -136,7 +138,7 @@ if __name__ == "__main__":
         save_total_limit=3,
         num_train_epochs=2,
         predict_with_generate=True,
-        fp16=False,
+        fp16=True,
         load_best_model_at_end=True,
         metric_for_best_model="rouge1",
         report_to="wandb",
