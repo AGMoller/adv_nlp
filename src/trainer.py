@@ -43,12 +43,17 @@ def preprocess_data(examples):
 
     texts_cleaned = [clean_text(text) for text in examples["text"]]
     inputs = [PREFIX + text for text in examples["text"]]
-    model_inputs = tokenizer(inputs, max_length=MAX_INPUT_LENGTH, truncation=False, padding=True)
+    model_inputs = tokenizer(
+        inputs, max_length=MAX_INPUT_LENGTH, truncation=False, padding=True
+    )
 
     # Setup the tokenizer for targets
     with tokenizer.as_target_tokenizer():
         labels = tokenizer(
-            examples["summary"], max_length=MAX_TARGET_LENGTH, truncation=False, padding=True
+            examples["summary"],
+            max_length=MAX_TARGET_LENGTH,
+            truncation=False,
+            padding=True,
         )
 
     model_inputs["labels"] = labels["input_ids"]
@@ -100,16 +105,29 @@ if __name__ == "__main__":
     wandb.init(project="danish-t5", entity="hrmussa")
 
     data = datasets.load_dataset("json", data_files="data/danewsroom.jsonl")
-    data = data["train"].train_test_split(test_size=0.05, seed=42)
-    data["train"] = data["test"]
+    # data = data["train"].train_test_split(test_size=0.05, seed=42)
+    # data["train"] = data["test"]
 
-    ds_splitter = data["train"].train_test_split(test_size=0.2, seed=42)
-    train = ds_splitter["train"]
-    ds_splitter = ds_splitter["test"].train_test_split(test_size=0.5, seed=42)
+    # ds_splitter = data["train"].train_test_split(test_size=0.2, seed=42)
+    # train = ds_splitter["train"]
+    # ds_splitter = ds_splitter["test"].train_test_split(test_size=0.5, seed=42)
 
-    data["train"] = train
-    data["validation"] = ds_splitter["train"]
-    data["test"] = ds_splitter["test"]
+    # data["train"] = train
+    # data["validation"] = ds_splitter["train"]
+    # data["test"] = ds_splitter["test"]
+
+    datasets_train_test = data["train"].train_test_split(test_size=10000)
+    datasets_train_validation = datasets_train_test["train"].train_test_split(
+        test_size=10000
+    )
+
+    data["train"] = datasets_train_validation["train"]
+    data["validation"] = datasets_train_validation["test"]
+    data["test"] = datasets_train_test["test"]
+
+    data["train"] = data["train"].shuffle().select(range(100000))
+    data["validation"] = data["validation"].shuffle().select(range(10000))
+    data["test"] = data["test"].shuffle().select(range(10000))
 
     tokenized_datasets = data.map(preprocess_data, batched=True)
 
