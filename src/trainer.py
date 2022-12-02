@@ -43,12 +43,12 @@ def preprocess_data(examples):
 
     texts_cleaned = [clean_text(text) for text in examples["text"]]
     inputs = [PREFIX + text for text in examples["text"]]
-    model_inputs = tokenizer(inputs, max_length=MAX_INPUT_LENGTH, truncation=True)
+    model_inputs = tokenizer(inputs, max_length=MAX_INPUT_LENGTH, truncation=False, padding=True)
 
     # Setup the tokenizer for targets
     with tokenizer.as_target_tokenizer():
         labels = tokenizer(
-            examples["summary"], max_length=MAX_TARGET_LENGTH, truncation=True
+            examples["summary"], max_length=MAX_TARGET_LENGTH, truncation=False, padding=True
         )
 
     model_inputs["labels"] = labels["input_ids"]
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     tokenized_datasets = data.map(preprocess_data, batched=True)
 
-    batch_size = 16
+    batch_size = 8
     model_name = "t5-da-test"
     model_dir = SRC_DIR / model_name
 
@@ -130,9 +130,9 @@ if __name__ == "__main__":
         per_device_eval_batch_size=batch_size,
         weight_decay=0.01,
         save_total_limit=3,
-        num_train_epochs=3,
+        num_train_epochs=5,
         predict_with_generate=True,
-        fp16=True,
+        fp16=False,
         load_best_model_at_end=True,
         metric_for_best_model="rouge1",
         report_to="wandb",
