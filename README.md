@@ -9,7 +9,7 @@ pip install -r requirements.txt
 ```
 
 # Replication of data processing
-To replicate the our training and test data run the following notebook (adv_nlp/data_preprocessing_with_tests.ipynb) and upload the data to you google drive 
+To replicate our training and test data run the following notebook (adv_nlp/data_preprocessing_with_tests.ipynb) and upload the data to you google drive 
 
 
 # Replicate Model finetuning and evaluations
