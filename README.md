@@ -11,4 +11,4 @@ pip install -r requirements.txt
 # Replicate Model finetuning and evaluations
 In order to finetune the models run the following notebook on google colab.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/weiji14/deepbedmap/)
+Notebook for training *dant5-small-ft* [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/174a62F3ZopO9mzFVpJkEror3wKPETls9?usp=sharing)
