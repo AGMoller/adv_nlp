@@ -8,8 +8,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+# Replication of data processing
+To replicate the our training and test data run the following notebook and upload the data to you google drive 
+
+
 # Replicate Model finetuning and evaluations
-In order to finetune the models run the following notebook on google colab.
+In order to finetune the models run the following [notebook](google.dk) on google colab.
+
 
 ## Notebooks for finetuning models
 
